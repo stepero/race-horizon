@@ -1,0 +1,315 @@
+<title>Race Horizon report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: jeden stĺpec do 960 px, hlavička so štartovacími svetlami (5 etáp), potom sekcie so tabuľkami a zoznamami. */
+  :root {
+    --bg: #f2f3f5;
+    --surface: #ffffff;
+    --fg: #14171c;
+    --muted: #586070;
+    --line: #d8dce3;
+    --accent: #d93a1b;
+    --accent-ink: #ffffff;
+    --good: #1c7547;
+    --good-bg: #e2f3ea;
+    --warn: #8f5200;
+    --warn-bg: #fbeed6;
+    --bad: #a3271a;
+    --bad-bg: #fbe3df;
+    --light-off: #dfe2e8;
+    --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+    --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0e13;
+      --surface: #131820;
+      --fg: #e9ecf2;
+      --muted: #9aa3b2;
+      --line: #262d38;
+      --accent: #ff5436;
+      --accent-ink: #14171c;
+      --good: #55c78f;
+      --good-bg: #12281d;
+      --warn: #f0b84a;
+      --warn-bg: #2d2411;
+      --bad: #ff8a7a;
+      --bad-bg: #2f1713;
+      --light-off: #232a35;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0e13;
+    --surface: #131820;
+    --fg: #e9ecf2;
+    --muted: #9aa3b2;
+    --line: #262d38;
+    --accent: #ff5436;
+    --accent-ink: #14171c;
+    --good: #55c78f;
+    --good-bg: #12281d;
+    --warn: #f0b84a;
+    --warn-bg: #2d2411;
+    --bad: #ff8a7a;
+    --bad-bg: #2f1713;
+    --light-off: #232a35;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    padding-block: 40px 72px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+  a { color: inherit; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1.05; }
+  h1 { font-size: clamp(48px, 9vw, 88px); text-transform: uppercase; letter-spacing: 0.01em; }
+  h2 { font-size: 30px; text-transform: uppercase; letter-spacing: 0.02em; }
+  h3 { font-size: 20px; letter-spacing: 0.02em; text-transform: uppercase; }
+  p { margin: 0; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .lead { font-size: 19px; max-width: 62ch; }
+  .muted { color: var(--muted); }
+
+  /* hlavička */
+  header { display: flex; flex-direction: column; gap: 22px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px;
+    font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; border: 2px solid var(--fg); color: var(--fg); background: transparent;
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn:hover { filter: brightness(1.08); }
+
+  .gantry { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 6px; }
+  .gantry .light { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; }
+  .gantry .lamp { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--light-off), 0 0 18px color-mix(in srgb, var(--accent) 55%, transparent); }
+  .gantry .name { font-family: var(--font-mono); font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  .gantry .name b { color: var(--fg); font-weight: 500; }
+
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0; border-top: 2px solid var(--fg); }
+  .facts div { padding: 14px 16px 6px 0; }
+  .facts dt { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .facts dd { margin: 2px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 38px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .facts { margin: 0; }
+
+  section { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  section > h2 { padding-bottom: 10px; border-bottom: 2px solid var(--fg); }
+  .sub { color: var(--muted); max-width: 66ch; }
+
+  /* tabuľky */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+  th, td { text-align: left; vertical-align: top; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  tr:last-child td { border-bottom: 0; }
+  th { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: color-mix(in srgb, var(--fg) 4%, var(--surface)); }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  td.num { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  code, .mono { font-family: var(--font-mono); font-size: 0.88em; overflow-wrap: anywhere; }
+
+  /* stavové štítky: text + tvar, nielen farba */
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.03em; white-space: nowrap; }
+  .pill::before { content: ""; width: 8px; height: 8px; background: currentColor; }
+  .pill.good { color: var(--good); background: var(--good-bg); }
+  .pill.good::before { border-radius: 50%; }
+  .pill.warn { color: var(--warn); background: var(--warn-bg); }
+  .pill.warn::before { transform: rotate(45deg); }
+  .pill.bad { color: var(--bad); background: var(--bad-bg); }
+  .pill.bad::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+
+  /* schéma online */
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: stretch; }
+  .node { background: var(--surface); border: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .node.hub { border: 2px solid var(--accent); }
+  .node .role { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .node p { font-size: 14px; color: var(--muted); }
+  .link { align-self: center; text-align: center; font-family: var(--font-mono); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .link .arrow { font-size: 22px; color: var(--accent); line-height: 1; }
+  .statics { background: var(--surface); border: 1px dashed var(--muted); padding: 12px 16px; font-size: 14px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+  .statics .role { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 20px; }
+  .panel { background: var(--surface); border: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  ul.plain { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  ul.plain li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: baseline; min-width: 0; }
+  ul.plain li > span:last-child { min-width: 0; }
+
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+  ol.steps li { counter-increment: s; display: grid; grid-template-columns: 44px 1fr; gap: 8px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  ol.steps li::before { content: counter(s); font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 1; color: var(--accent); }
+  ol.steps b { font-weight: 600; }
+
+  footer { border-top: 1px solid var(--line); padding-top: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+
+  @media (max-width: 760px) {
+    .flow { grid-template-columns: 1fr; }
+    .link { flex-direction: row; justify-content: center; gap: 10px; }
+    .link .arrow { transform: rotate(90deg); }
+    body { padding-block: 28px 56px; }
+    .wrap { gap: 44px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .btn { transition: filter 0.15s; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Report projektu · 12. 11. 2026</div>
+    <h1>Race Horizon</h1>
+    <p class="lead">Slovenský pretekársky prototyp pre PC prehliadač. Všetkých päť plánovaných etáp je hotových, hra je nasadená na webe a online preteky bežia cez server na Renderi.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://stepero.github.io/race-horizon/" target="_blank" rel="noopener">Hrať</a>
+      <a class="btn" href="https://github.com/stepero/race-horizon" target="_blank" rel="noopener">Repozitár</a>
+    </div>
+    <div class="gantry" role="img" aria-label="Päť etáp, všetky hotové">
+      <div class="light"><span class="lamp"></span><span class="name"><b>1</b> Jazdné jadro</span></div>
+      <div class="light"><span class="lamp"></span><span class="name"><b>2</b> Kariéra</span></div>
+      <div class="light"><span class="lamp"></span><span class="name"><b>3</b> Otvorené svety</span></div>
+      <div class="light"><span class="lamp"></span><span class="name"><b>4</b> 24-hodinovka</span></div>
+      <div class="light"><span class="lamp"></span><span class="name"><b>5</b> Online</span></div>
+    </div>
+    <dl class="facts">
+      <div><dt>Tratí</dt><dd>24</dd></div>
+      <div><dt>Testov zelených</dt><dd>101</dd></div>
+      <div><dt>Súborov v repe</dt><dd>100</dd></div>
+      <div><dt>Riadkov kódu</dt><dd>9 900</dd></div>
+    </dl>
+  </header>
+
+  <section>
+    <h2>Čo je implementované</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Etapa</th><th>Obsah</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Jazdné jadro</td><td>Fyzika s modelom bicykla, prenosom záťaže, aerodynamikou, trením pneumatík, ABS a trakčnou kontrolou, opotrebením, palivom a poškodením. Počasie (suché, meniace sa, dážď). 24 tratí vrátane fiktívnej Horizon Park, F1 tímy a GT značky. AI súperi v piatich náročnostiach, štartovacie svetlá, boxy, HUD, tréner, dve kamery, zvuk motora.</td></tr>
+          <tr><td>2 · Kariéra</td><td>Viac uložených kariér, profil, voľba triedy a tímu. Kvalifikácie, šampionáty, turnaje, level 0–1000, mince a vylepšenia auta, ponuky tímov po sezóne, lokálny rebríček.</td></tr>
+          <tr><td>3 · Otvorené svety</td><td>Dve procedurálne mapy po 8–9 km s voliteľnou civilnou premávkou. Výzvy (šprint, rýchlostná pasca, čistá jazda) s odmenami do kariéry.</td></tr>
+          <tr><td>4 · 24-hodinovka</td><td>24 minút herného času, 30 áut na trati, povinná zastávka v boxoch, poradie aj v triede. V kariére raz za sezónu, plus samostatný režim.</td></tr>
+          <tr><td>5 · Online</td><td>Miestnosti, voľba tímu, pripravenosť, hostiteľ, chat, synchronizácia áut, živé poradie, výsledky, spoločný štart po načítaní trate u všetkých.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ako funguje online</h2>
+    <p class="sub">Každý klient simuluje vlastné auto a posiela jeho stav. Server fyziku nepočíta. Drží miestnosti, riadi štart, preposiela stavy, počíta poradie a kontroluje vstupy.</p>
+    <div class="statics">
+      <span class="role">GitHub Pages</span>
+      <span>Dodá hru ako statické súbory. Fyzika a AI pre jedného hráča bežia v prehliadači.</span>
+    </div>
+    <div class="flow">
+      <div class="node"><span class="role">Prehliadač</span><h3>Hráč A</h3><p>Simuluje svoje auto, cudzie auto zobrazuje s oneskorením 0,1 s.</p></div>
+      <div class="link"><span class="arrow" aria-hidden="true">⇄</span><span>wss://</span><span>20× za sekundu</span></div>
+      <div class="node hub"><span class="role">Render, free plán</span><h3>Server</h3><p>Miestnosti, štart, preposielanie stavov, chat, poradie. Kontrola rozsahov, dĺžok textu a frekvencie správ.</p></div>
+      <div class="link"><span class="arrow" aria-hidden="true">⇄</span><span>wss://</span><span>20× za sekundu</span></div>
+      <div class="node"><span class="role">Prehliadač</span><h3>Hráč B</h3><p>Rovnako ako A. Súpera vidí ako vzdialené auto.</p></div>
+    </div>
+    <p class="sub">WebSocket vrstva je vlastná (<code>server/ws.ts</code>, bez závislostí), lebo inštalácia balíka <code>ws</code> nebola povolená.</p>
+  </section>
+
+  <section>
+    <h2>Nasadenie</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Časť</th><th>Kde</th><th>Ako</th></tr></thead>
+        <tbody>
+          <tr><td>Hra</td><td class="mono"><a href="https://stepero.github.io/race-horizon/" target="_blank" rel="noopener">stepero.github.io/race-horizon</a></td><td>Workflow <code>.github/workflows/pages.yml</code>: pri pushi na <code>main</code> spustí testy, build a nasadenie.</td></tr>
+          <tr><td>Server</td><td class="mono">race-horizon-server.onrender.com</td><td>Blueprint <code>render.yaml</code>, free plán, kontrola <code>/health</code>.</td></tr>
+          <tr><td>Prepojenie</td><td class="mono">VITE_SERVER_URL</td><td>Premenná v repe sa zapíše do buildu. Nasadený bundle obsahuje <code>wss://race-horizon-server.onrender.com</code>.</td></tr>
+          <tr><td>Kód</td><td class="mono">github.com/stepero/race-horizon</td><td>Verejné repo, commity <code>0aeda42</code> a <code>6ded121</code>. Ten istý stav je aj na github.ibm.com.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Čo je overené</h2>
+    <div class="cols">
+      <div class="panel">
+        <h3>Overené</h3>
+        <ul class="plain">
+          <li><span class="pill good">overené</span><span>101 automatických testov prechádza, z toho 11 online (protokol, miestnosti, interpolácia, dvaja klienti, skutočný WebSocket).</span></li>
+          <li><span class="pill good">overené</span><span>Server na Renderi: <code>/health</code> vracia OK, pripojenie cez <code>wss://</code> a pozdrav <code>hello</code> fungujú.</span></li>
+          <li><span class="pill good">overené</span><span>Živý test na nasadenej stránke v dvoch samostatných oknách Chrome: pripojenie, miestnosť, vstup druhého hráča, pripravenosť, štart, jazda a chat počas pretekov.</span></li>
+          <li><span class="pill good">overené</span><span>Hosť videl auto hostiteľa s rozdielom asi 4 m, čo sedí s oneskorením zobrazenia 0,1 s. Konzola v oboch oknách bola bez chýb.</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Neoverené</h3>
+        <ul class="plain">
+          <li><span class="pill warn">neoverené</span><span>Dojazd do cieľa a online výsledky v reálnom behu. Test trval len pár desiatok sekúnd.</span></li>
+          <li><span class="pill warn">neoverené</span><span>Kolízie a poškodenie medzi online autami. README to uvádza ako funkčné, v živom teste som to nepozoroval.</span></li>
+          <li><span class="pill warn">neoverené</span><span>Správanie po zaspatí a prebudení servera.</span></li>
+          <li><span class="pill warn">neoverené</span><span>Dynamické počasie v dlhých pretekoch.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Problémy, ktoré sme riešili</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Problém</th><th>Riešenie</th></tr></thead>
+        <tbody>
+          <tr><td>Kompilácia padala na neviditeľných znakoch Unicode v regexe v <code>protocol.ts</code>.</td><td>Znaky sú zapísané cez <code>\u</code> escapy.</td></tr>
+          <tr><td>Neúspešné prvé pripojenie hlásilo „spojenie sa prerušilo“.</td><td>Klient oznamuje stratu len pri spojení, ktoré už bolo otvorené.</td></tr>
+          <tr><td>Push na github.com odmietnutý pre chýbajúci scope <code>workflow</code>.</td><td>Scope rozšírený cez <code>gh auth refresh</code>.</td></tr>
+          <tr><td>Prvý beh Pages zlyhal s chybou 404.</td><td>Pages neboli zapnuté. Po zapnutí a opätovnom spustení workflow prešiel.</td></tr>
+          <tr><td>Môj prvý živý test „prešiel“, hoci sa autá nehýbali.</td><td>Test teraz čaká na fázu <code>racing</code> a porovnáva polohy áut u oboch hráčov.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Riziká a obmedzenia</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Dopad</th><th>Čo to znamená</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill bad">vysoký</span></td><td>Bez ochrany pred podvodom. Server dôveruje polohe a času dojazdu od klientov a kontroluje len rozsahy. Kto pozná adresu, môže hlásiť falošné údaje.</td></tr>
+          <tr><td><span class="pill warn">stredný</span></td><td>Render free plán zaspí po 15 minútach. Prvé pripojenie trvá 30–60 s, klient čaká len 6 s, takže prvý pokus môže zlyhať.</td></tr>
+          <tr><td><span class="pill warn">stredný</span></td><td>Miestnosti sú len v pamäti servera a po reštarte zmiznú.</td></tr>
+          <tr><td><span class="pill warn">nízky</span></td><td>Online sú len okruhové preteky, bez AI súperov, otvorených svetov a kariérnych odmien.</td></tr>
+          <tr><td><span class="pill warn">nízky</span></td><td>Modely áut a mapy otvorených svetov sú dočasné (<code>placeholder</code>).</td></tr>
+          <tr><td><span class="pill warn">nízky</span></td><td>Text pomocníka na pripojení obsahuje ukážkovú adresu <code>ws://192.168.1.20:8787</code> (<code>src/i18n/sk.ts:461</code>). Na verejnom webe vyzerá zavádzajúco.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Navrhované ďalšie kroky</h2>
+    <ol class="steps">
+      <li><span><b>Predĺžiť limit pripojenia</b> na 45–60 s, aby prvé pripojenie po zaspatí Renderu prešlo bez druhého pokusu.</span></li>
+      <li><span><b>Opraviť ukážkovú adresu</b> v texte pomocníka na všeobecný tvar, napríklad <code>ws://&lt;IP-počítača&gt;:8787</code>.</span></li>
+      <li><span><b>Otestovať online dojazd, výsledky a kolízie</b> v živom behu s dvoma oknami.</span></li>
+      <li><span><b>Základná ochrana servera:</b> limit rýchlosti odvodený z polohy a kontrola prejdených úsekov.</span></li>
+      <li><span><b>Zvyšok plánu:</b> doladenie kokpitovej kamery, rezervní jazdci, AI v otvorených svetoch, upozornenia z <code>npm audit</code>.</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    <span>Race Horizon · Three.js 0.186 · TypeScript 5.9 · Vite 6</span>
+    <span>commit 6ded121</span>
+  </footer>
+</div>
