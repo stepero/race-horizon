@@ -1,0 +1,32 @@
+{
+  "name": "race-horizon",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Race Horizon – hrateľný pretekársky prototyp (Three.js + TypeScript)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "tracks": "node scripts/build-tracks.mjs",
+    "screenshot": "node scripts/screenshot.mjs",
+    "server": "vite-node server/main.ts",
+    "dev:all": "node scripts/dev-all.mjs"
+  },
+  "dependencies": {
+    "@fontsource/barlow-condensed": "5.2.8",
+    "@fontsource/inter": "5.2.8",
+    "three": "0.186.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "@types/three": "0.186.0",
+    "puppeteer-core": "25.16.0",
+    "typescript": "5.9.3",
+    "vite": "6.4.4",
+    "vite-node": "3.2.4",
+    "vitest": "3.2.4"
+  }
+}
