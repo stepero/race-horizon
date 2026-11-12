@@ -102,6 +102,9 @@ export class NetClient {
 export function defaultServerUrl(): string {
   const q = new URLSearchParams(location.search).get('server');
   if (q) return q;
+  // produkčný build: adresa nasadeného servera (VITE_SERVER_URL pri builde)
+  const built = import.meta.env.VITE_SERVER_URL as string | undefined;
+  if (built) return built;
   const host = location.hostname || 'localhost';
   const proto = location.protocol === 'https:' ? 'wss' : 'ws';
   return `${proto}://${host}:8787`;

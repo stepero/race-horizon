@@ -1,0 +1,14 @@
+# Render Blueprint: online server Race Horizon (len WebSocket server, bez frontendu)
+services:
+  - type: web
+    name: race-horizon-server
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev --ignore-scripts
+    startCommand: npx vite-node server/main.ts
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "1"
